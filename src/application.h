@@ -13,15 +13,20 @@ class Application : public AbstractApplication<Config, AppMetadata> {
     static std::map<PropertyEnum, AppMetadata> PropToMetaMap;
 
     Storage<Config> &_config_storage;
+    Timer &_timer;
+
+    bool _relay_state = RELAY_INITIAL_STATE;
+    unsigned long _last_relay_update = 0;
+    unsigned long _relay_update_timer = -1ul;
 
 public:
-    explicit Application(Storage<Config> &config_storage);
-
     inline ConfigT &config() override { return _config_storage.get(); }
 
+    explicit Application(Storage<Config> &config_storage, Timer &timer);
     void begin();
 
     void load();
+    void update_relay_state(bool state);
 };
 
 typedef PacketHandler<Application> AppPacketHandler;

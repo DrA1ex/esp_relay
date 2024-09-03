@@ -4,7 +4,9 @@
 #define TIMER_GROW_AMOUNT                       (8u)
 #endif
 
-typedef void (*TimerFn)(void *);
+#include "functional"
+
+typedef std::function<void(void *)> TimerFn;
 
 struct TimerEntry {
     bool active = false;

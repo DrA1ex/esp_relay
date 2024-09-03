@@ -37,6 +37,8 @@ void setup() {
     delay(2000);
 #endif
 
+    pinMode(PIN_RELAY, OUTPUT);
+
     if (!LittleFS.begin()) {
         D_PRINT("Unable to initialize FS");
     }
@@ -48,7 +50,7 @@ void setup() {
 
     config_storage->begin(&LittleFS);
 
-    app = new Application(*config_storage);
+    app = new Application(*config_storage, *global_timer);
     handler = new AppPacketHandler(*app);
 
     web_server = new WebServer();
