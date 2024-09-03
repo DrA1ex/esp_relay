@@ -1,0 +1,9 @@
+.pio
+.idea
+.DS_Store
+
+src/credentials.h
+
+data/
+www/node_modules
+www/package-lock.json
