@@ -353,12 +353,12 @@ declare module "application.js" {
     // TODO: separate types
     export interface PropertyConfig {
         key: string;
-        type: ControlType;
+        type: keyof typeof ControlType;
         title?: string;
         cmd?: [number, number] | number;
         min?: number;
         limit?: number;
-        kind?: number;
+        kind?: string;
         label?: string;
         maxLength?: number;
         list?: number;
