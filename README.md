@@ -14,9 +14,11 @@ Smart Relay Control for ESP32/ESP8266
 
 ## Installation
 
-- Install [Platform.IO](https://platformio.org/install):
-- Modify `credentials.h` and optionally `constants.h`
-- Upload filesystem and firmware
+**Note:** This repository contains a submodule. Please use the `--recursive` option when cloning.
+
+1. Install [PlatformIO](https://platformio.org/install).
+2. Modify the `credentials.h` file and, if needed, customize `constants.h`.
+3. Upload the filesystem and firmware.
 
 ```bash
 git clone --recursive https://github.com/DrA1ex/esp_relay.git
