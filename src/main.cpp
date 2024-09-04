@@ -5,6 +5,7 @@
 #include "constants.h"
 
 #include "lib/misc/timer.h"
+#include "lib/misc/ntp_time.h"
 #include "lib/misc/storage.h"
 
 #include "lib/network/web.h"
@@ -21,6 +22,7 @@ WifiManager *wifi_manager;
 
 Timer *global_timer;
 Storage<Config> *config_storage;
+NtpTime *ntp_time;
 
 Application *app;
 AppPacketHandler *handler;
@@ -50,7 +52,8 @@ void setup() {
 
     config_storage->begin(&LittleFS);
 
-    app = new Application(*config_storage, *global_timer);
+    ntp_time = new NtpTime();
+    app = new Application(*config_storage, *global_timer, *ntp_time);
     handler = new AppPacketHandler(*app);
 
     web_server = new WebServer();
@@ -77,6 +80,7 @@ void loop() {
             break;
 
         case ServiceState::INITIALIZING:
+            ntp_time->begin(TIME_ZONE);
             app->begin();
 
             web_server->begin(&LittleFS);
@@ -93,10 +97,11 @@ void loop() {
             wifi_manager->handle_connection();
             ArduinoOTA.handle();
 
+            ntp_time->update();
+
             global_timer->handle_timers();
             ws_server->handle_incoming_data();
             mqtt_server->handle_connection();
-
             break;
     }
 }

@@ -5,6 +5,7 @@
 #ifdef DEBUG
 
 #include <Arduino.h>
+#include <ctime>
 
 #define D_PRINT(x) Serial.println(x)
 #define D_PRINTF(...) Serial.printf(__VA_ARGS__)
@@ -16,6 +17,14 @@
             D_PRINTF("%02X ", ptr[i]);                  \
         }                                               \
         D_PRINT()
+
+#define D_TIME_STRING(unix_time) ([](time_t time) {                             \
+        static char buffer[20];                                                 \
+        struct tm* time_info;                                                   \
+        time_info = localtime(&time);                                           \
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", time_info);       \
+        return buffer;                                                          \
+}(unix_time))
 
 #if DEBUG_LEVEL == __DEBUG_LEVEL_VERBOSE
 #define VERBOSE(ARG) ARG

@@ -125,7 +125,7 @@ void WebSocketServer<ApplicationT, C1>::on_event(AsyncWebSocket *,
             }
 
             if (len > WS_MAX_PACKET_SIZE) {
-                D_PRINTF("WebSocket packet dropped. Max packet size %ui\n, but received %ul", WS_MAX_PACKET_SIZE, len);
+                D_PRINTF("WebSocket packet dropped. Max packet size %ui\n, but received %u", WS_MAX_PACKET_SIZE, len);
                 _send_response(client->id(), 0, Response::code(ResponseCode::PACKET_LENGTH_EXCEEDED));
                 return;
             }

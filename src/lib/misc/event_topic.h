@@ -46,19 +46,19 @@ public:
     void publish(void *sender, T type, void *arg = nullptr);
 };
 
-template<typename T, typename _1>
-void EventTopic<T, _1>::subscribe(void *target, EventTopic::SubscriptionCallback callback) {
+template<typename T, typename S1>
+void EventTopic<T, S1>::subscribe(void *target, EventTopic::SubscriptionCallback callback) {
     _broadcast_subscribers.emplace(target, callback);
 }
 
-template<typename T, typename _1>
-void EventTopic<T, _1>::subscribe(void *target, T type, EventTopic::SubscriptionCallback callback) {
+template<typename T, typename S1>
+void EventTopic<T, S1>::subscribe(void *target, T type, EventTopic::SubscriptionCallback callback) {
     auto &type_set = _subscribers[type];
     type_set.emplace(Subscription(target, callback));
 }
 
-template<typename T, typename _1>
-void EventTopic<T, _1>::publish(void *sender, T type, void *arg) {
+template<typename T, typename S1>
+void EventTopic<T, S1>::publish(void *sender, T type, void *arg) {
     for (auto &sub: _broadcast_subscribers) {
         sub.call(sender, type, arg);
     }

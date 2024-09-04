@@ -17,22 +17,33 @@ std::map<PacketTypeEnum, AppMetadata> Application::PropToMetaMap = {
                           &Config::night_mode, &NightModeConfig::end_time),
 };
 
-Application::Application(Storage<Config> &config_storage, Timer &timer) :
+Application::Application(Storage<Config> &config_storage, Timer &timer, NtpTime &ntp_time) :
         AbstractApplication<Config, AppMetadata>(PropToMetaMap),
-        _config_storage(config_storage), _timer(timer) {
+        _config_storage(config_storage), _timer(timer), ntp_time(ntp_time),
+        _night_mode_manager(NightModeManager(ntp_time, timer, config())) {
 }
 
 void Application::begin() {
-    event_property_changed().subscribe(this, [this](auto, auto, auto) {
+    event_property_changed().subscribe(this, [this](auto, auto prop, auto) {
         _config_storage.save();
+
+        if (prop >= PropertyEnum::NIGHT_MODE_ENABLED && prop <= PropertyEnum::NIGHT_MODE_END_TIME) {
+            _night_mode_manager.update();
+        }
+
         load();
     });
 
+    _night_mode_manager.event_night_mode().subscribe(this, [this](auto, auto state, auto) {
+        load();
+    });
+
+    _night_mode_manager.update();
     load();
 }
 
 void Application::load() {
-    update_relay_state(config().power);
+    update_relay_state(!_night_mode_manager.active() && config().power);
 }
 
 void Application::update_relay_state(bool state) {
@@ -60,9 +71,13 @@ void Application::update_relay_state(bool state) {
 
     _relay_update_timer = _timer.add_timeout(
             [=](auto) {
-                _relay_update_timer = -1ul;
-                this->update_relay_state(state);
+                _relay_timer_handler(state);
             }, RELAY_SWITCH_INTERVAL - delta + 1);
+}
+
+void Application::_relay_timer_handler(bool state) {
+    _relay_update_timer = -1ul;
+    update_relay_state(state);
 }
 
 Response AppPacketHandler::handle_packet_data(uint32_t client_id, const Packet<PacketEnumT> &packet) {

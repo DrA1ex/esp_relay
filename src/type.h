@@ -1,5 +1,6 @@
 #pragma once
 
+#include "lib/base/application.h"
 #include "lib/utils/enum.h"
 
 MAKE_ENUM(ServiceState, uint8_t,

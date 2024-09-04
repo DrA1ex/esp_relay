@@ -1,5 +1,7 @@
 #include "ntp_time.h"
 
+#include "../debug.h"
+
 const uint32_t NtpTime::SECONDS_PER_DAY = (uint32_t) 24 * 60 * 60;
 
 NtpTime::NtpTime() : _ntp_client(_wifi_udp) {}
@@ -15,7 +17,9 @@ void NtpTime::begin(float tz) {
 }
 
 void NtpTime::update() {
-    _ntp_client.update();
+    bool success = _ntp_client.update();
+
+    if (success) D_PRINTF("NtpTime loaded. Now: %s\n", D_TIME_STRING(epoch_tz()));
 }
 
 tm *NtpTime::date() const {
