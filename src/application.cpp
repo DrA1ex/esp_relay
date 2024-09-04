@@ -1,22 +1,20 @@
 #include "application.h"
 
-#include <memory>
-
 #include "lib/utils/meta.h"
 
-struct RelayStateChangeArg {
-    Application *app;
-    bool state;
-};
-
-std::map<PropertyEnum, AppMetadata> Application::PropToMetaMap = {
-        define_meta_entry(PropertyEnum::POWER,
+std::map<PacketTypeEnum, AppMetadata> Application::PropToMetaMap = {
+        define_meta_entry(PropertyEnum::POWER, PacketTypeEnum::POWER,
                           MQTT_TOPIC_POWER, MQTT_OUT_TOPIC_POWER, &Config::power),
-        define_meta_entry(PropertyEnum::NIGHT_MODE_ENABLED,
+
+        define_meta_entry(PropertyEnum::NIGHT_MODE_ENABLED, PacketTypeEnum::NIGHT_MODE_ENABLED,
                           MQTT_TOPIC_NIGHT_MODE, MQTT_OUT_TOPIC_NIGHT_MODE,
                           &Config::night_mode, &NightModeConfig::enabled),
-        define_meta_entry(PropertyEnum::NIGHT_MODE_START_TIME, &Config::night_mode, &NightModeConfig::start_time),
-        define_meta_entry(PropertyEnum::NIGHT_MODE_END_TIME, &Config::night_mode, &NightModeConfig::end_time),
+
+        define_meta_entry(PropertyEnum::NIGHT_MODE_START_TIME, PacketTypeEnum::NIGHT_MODE_START_TIME,
+                          &Config::night_mode, &NightModeConfig::start_time),
+
+        define_meta_entry(PropertyEnum::NIGHT_MODE_END_TIME, PacketTypeEnum::NIGHT_MODE_END_TIME,
+                          &Config::night_mode, &NightModeConfig::end_time),
 };
 
 Application::Application(Storage<Config> &config_storage, Timer &timer) :
@@ -65,4 +63,12 @@ void Application::update_relay_state(bool state) {
                 _relay_update_timer = -1ul;
                 this->update_relay_state(state);
             }, RELAY_SWITCH_INTERVAL - delta + 1);
+}
+
+Response AppPacketHandler::handle_packet_data(uint32_t client_id, const Packet<PacketEnumT> &packet) {
+    if (packet.header->type == PacketTypeEnum::GET_CONFIG) {
+        return protocol().serialize(app().config());
+    }
+
+    return PacketHandler<Application>::handle_packet_data(client_id, packet);
 }

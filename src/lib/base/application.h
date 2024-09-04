@@ -18,8 +18,8 @@ struct PropertyMetadata {
     PropEnumT property;
     PacketEnumT packet_type;
 
-    uint8_t value_offset;
-    uint8_t value_size;
+    uint8_t value_offset = 0;
+    uint8_t value_size = 0;
 
     const char *mqtt_in_topic = nullptr;
     const char *mqtt_out_topic = nullptr;

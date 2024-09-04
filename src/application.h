@@ -10,7 +10,7 @@
 #include "type.h"
 
 class Application : public AbstractApplication<Config, AppMetadata> {
-    static std::map<PropertyEnum, AppMetadata> PropToMetaMap;
+    static std::map<PacketTypeEnum, AppMetadata> PropToMetaMap;
 
     Storage<Config> &_config_storage;
     Timer &_timer;
@@ -29,4 +29,9 @@ public:
     void update_relay_state(bool state);
 };
 
-typedef PacketHandler<Application> AppPacketHandler;
+class AppPacketHandler : public PacketHandler<Application> {
+public:
+    explicit AppPacketHandler(Application &app) : PacketHandler<Application>(app) {}
+
+    Response handle_packet_data(uint32_t client_id, const Packet<PacketEnumT> &packet) override;
+};
