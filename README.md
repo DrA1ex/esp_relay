@@ -19,7 +19,7 @@ Smart Relay Control for ESP32/ESP8266
 - Upload filesystem and firmware
 
 ```bash
-git clone https://github.com/DrA1ex/esp_relay.git
+git clone --recursive https://github.com/DrA1ex/esp_relay.git
 cd esp_relay
 
 chmod +x ./upload_fs.sh
