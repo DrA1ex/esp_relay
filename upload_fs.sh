@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OTA=${OTA:0}
+OTA=${OTA=0}
 PLATFORM=${PLATFORM=esp8266}
 
 set +v
