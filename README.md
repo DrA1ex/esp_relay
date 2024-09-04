@@ -10,7 +10,7 @@ Smart Relay Control for ESP32/ESP8266
 
 ## Connection
 
-TODO
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/03cba235-0981-460f-9fcf-69f6f5043c81">
 
 ## Installation
 
