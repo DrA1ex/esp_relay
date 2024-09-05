@@ -73,7 +73,7 @@ export class AppConfigBase extends EventEmitter {
             return;
         }
 
-        const value = prop.key.split(".").reduce((obj, key) => obj[key], this);
+        const value = this.#property(key, (obj, key) => obj[key]);
         return (prop.transform ? prop.transform(value) : value) ?? prop.default;
     }
 
@@ -97,5 +97,21 @@ export class AppConfigBase extends EventEmitter {
         }
 
         target[parts.at(-1)] = value;
+
+        this.#property(key, (obj, key) => obj[key] = value);
+    }
+
+    #property(path, fn) {
+        let target = this;
+        const parts = path.split(".");
+        for (let i = 0; i < parts.length - 1; i++) {
+            if (target instanceof Array) {
+                target = target.at(Number.parseInt(parts[i]));
+            } else {
+                target = target[parts[i]];
+            }
+        }
+
+        return fn(target, parts.at(-1));
     }
 }
