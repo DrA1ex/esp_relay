@@ -17,11 +17,10 @@ class Application : public AbstractApplication<Config, AppMetadata> {
 
     Storage<Config> &_config_storage;
     Timer &_timer;
-    NtpTime &ntp_time;
 
     NightModeManager _night_mode_manager;
 
-    RelayManager _relays[RELAY_COUNT];
+    RelayManager _relays[ACTUAL_RELAY_COUNT];
 
 public:
     inline ConfigT &config() override { return _config_storage.get(); }

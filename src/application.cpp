@@ -18,13 +18,13 @@ std::map<PacketTypeEnum, AppMetadata> Application::PropToMetaMap = {
 
         {PacketTypeEnum::RELAY_POWER_0, {
                 PropertyEnum::RELAY_POWER_0, PacketTypeEnum::RELAY_POWER_0,
-                offsetof(Config, relay[0]), sizeof(Config::relay[0]),
+                offsetof(Config, relay[0].power), sizeof(Config::relay[0].power),
         }},
 
 #if RELAY_COUNT >= 2
         {PacketTypeEnum::RELAY_POWER_1, {
                 PropertyEnum::RELAY_POWER_1, PacketTypeEnum::RELAY_POWER_1,
-                offsetof(Config, relay[1]), sizeof(Config::relay[1]),
+                offsetof(Config, relay[1].power), sizeof(Config::relay[1].power),
         }},
 
 #endif
@@ -32,35 +32,32 @@ std::map<PacketTypeEnum, AppMetadata> Application::PropToMetaMap = {
 #if RELAY_COUNT >= 3
         {PacketTypeEnum::RELAY_POWER_2, {
                 PropertyEnum::RELAY_POWER_2, PacketTypeEnum::RELAY_POWER_2,
-                offsetof(Config, relay[2]), sizeof(Config::relay[2]),
+                offsetof(Config, relay[2].power), sizeof(Config::relay[2].power),
         }},
 #endif
 
 #if RELAY_COUNT >= 4
         {PacketTypeEnum::RELAY_POWER_3, {
                 PropertyEnum::RELAY_POWER_3, PacketTypeEnum::RELAY_POWER_3,
-                offsetof(Config, relay[3]), sizeof(Config::relay[3]),
+                offsetof(Config, relay[3].power), sizeof(Config::relay[3].power),
         }},
 #endif
 };
 
 Application::Application(Storage<Config> &config_storage, Timer &timer, NtpTime &ntp_time) :
         AbstractApplication<Config, AppMetadata>(PropToMetaMap),
-        _config_storage(config_storage), _timer(timer), ntp_time(ntp_time),
+        _config_storage(config_storage), _timer(timer),
         _night_mode_manager(NightModeManager(ntp_time, timer, config())),
         _relays{
-                RelayManager(_timer, PIN_RELAY_0, RELAY_INITIAL_STATE),
-
+                RelayManager(_timer, PIN_RELAY_0),
 #if RELAY_COUNT >= 2
-                RelayManager(_timer, PIN_RELAY_1, RELAY_INITIAL_STATE),
+                RelayManager(_timer, PIN_RELAY_1),
 #endif
-
 #if RELAY_COUNT >= 3
-                RelayManager(_timer, PIN_RELAY_2, RELAY_INITIAL_STATE),
+                RelayManager(_timer, PIN_RELAY_2),
 #endif
-
 #if RELAY_COUNT >= 4
-                RelayManager(_timer, PIN_RELAY_3, RELAY_INITIAL_STATE),
+                RelayManager(_timer, PIN_RELAY_3),
 #endif
         } {}
 
@@ -79,6 +76,10 @@ void Application::begin() {
         load();
     });
 
+    if (RELAY_FORCE_INITIAL_STATE) {
+        config().power = RELAY_INITIAL_STATE;
+    }
+
     _night_mode_manager.update();
     load();
 }
@@ -87,8 +88,8 @@ void Application::load() {
     if constexpr (ACTUAL_RELAY_COUNT == 1) {
         _relays[0].update_relay_state(!_night_mode_manager.active() && config().power);
     } else {
-        for (uint8_t i = 0; i < RELAY_COUNT; ++i) {
-            auto enabled = config().relay[i] && !_night_mode_manager.active() && config().power;
+        for (uint8_t i = 0; i < ACTUAL_RELAY_COUNT; ++i) {
+            auto enabled = config().relay[i].power && !_night_mode_manager.active() && config().power;
             _relays[i].update_relay_state(enabled);
         }
     }

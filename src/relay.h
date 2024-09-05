@@ -17,8 +17,10 @@ class RelayManager {
 
     void _relay_timer_handler(bool state);
 
+    inline void _relay_write(bool state);
+
 public:
-    RelayManager(Timer &timer, uint8_t pin, bool initial_state = false);;
+    RelayManager(Timer &timer, uint8_t pin, bool initial_state = RELAY_INITIAL_STATE);
 
     void update_relay_state(bool state);
 };

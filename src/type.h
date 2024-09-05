@@ -57,12 +57,12 @@ struct __attribute ((packed)) NightModeConfig {
 };
 
 struct __attribute ((packed)) Config {
-    bool power = true;
+    bool power = RELAY_INITIAL_STATE;
 
-    NightModeConfig night_mode;
+    NightModeConfig night_mode{};
 
     uint8_t relay_count = ACTUAL_RELAY_COUNT;
-    bool relay[ACTUAL_RELAY_COUNT]{};
+    RelayConfig relay[ACTUAL_RELAY_COUNT]{};
 };
 
 typedef PropertyMetadata<PropertyEnum, PacketTypeEnum> AppMetadata;

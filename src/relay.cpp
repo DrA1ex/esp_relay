@@ -5,7 +5,7 @@
 RelayManager::RelayManager(Timer &timer, uint8_t pin, bool initial_state) :
         _pin(pin), _timer(timer), _relay_state(initial_state) {
     pinMode(pin, OUTPUT);
-    digitalWrite(_pin, initial_state);
+    _relay_write(_relay_state);
 }
 
 void RelayManager::update_relay_state(bool state) {
@@ -24,7 +24,7 @@ void RelayManager::update_relay_state(bool state) {
 
         _relay_state = state;
         _last_relay_update = millis();
-        digitalWrite(_pin, _relay_state ? HIGH : LOW);
+        _relay_write(_relay_state);
 
         return;
     }
@@ -40,4 +40,9 @@ void RelayManager::update_relay_state(bool state) {
 void RelayManager::_relay_timer_handler(bool state) {
     _relay_update_timer = -1ul;
     update_relay_state(state);
+}
+
+void RelayManager::_relay_write(bool state) {
+    auto converted_state = state ? RELAY_HIGH_LEVEL : !RELAY_HIGH_LEVEL;
+    digitalWrite(_pin, converted_state ? HIGH : LOW);
 }
