@@ -84,9 +84,13 @@ void Application::begin() {
 }
 
 void Application::load() {
-    for (uint8_t i = 0; i < RELAY_COUNT; ++i) {
-        auto enabled = config().relay[i] && !_night_mode_manager.active() && config().power;
-        _relays[i].update_relay_state(enabled);
+    if constexpr (ACTUAL_RELAY_COUNT == 1) {
+        _relays[0].update_relay_state(!_night_mode_manager.active() && config().power);
+    } else {
+        for (uint8_t i = 0; i < RELAY_COUNT; ++i) {
+            auto enabled = config().relay[i] && !_night_mode_manager.active() && config().power;
+            _relays[i].update_relay_state(enabled);
+        }
     }
 }
 

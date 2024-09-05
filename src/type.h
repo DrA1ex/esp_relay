@@ -1,9 +1,14 @@
 #pragma once
 
+#include <algorithm>
+
 #include "lib/base/application.h"
 #include "lib/utils/enum.h"
 
 #include "constants.h"
+
+constexpr uint8_t MAX_RELAY_COUNT = 4;
+constexpr uint8_t ACTUAL_RELAY_COUNT = std::max(1, std::min<int>(MAX_RELAY_COUNT, RELAY_COUNT));
 
 MAKE_ENUM(ServiceState, uint8_t,
           UNINITIALIZED, 0,
@@ -56,8 +61,8 @@ struct __attribute ((packed)) Config {
 
     NightModeConfig night_mode;
 
-    uint8_t relay_count = RELAY_COUNT;
-    bool relay[RELAY_COUNT]{};
+    uint8_t relay_count = ACTUAL_RELAY_COUNT;
+    bool relay[ACTUAL_RELAY_COUNT]{};
 };
 
 typedef PropertyMetadata<PropertyEnum, PacketTypeEnum> AppMetadata;
