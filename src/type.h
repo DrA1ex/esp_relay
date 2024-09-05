@@ -3,6 +3,8 @@
 #include "lib/base/application.h"
 #include "lib/utils/enum.h"
 
+#include "constants.h"
+
 MAKE_ENUM(ServiceState, uint8_t,
           UNINITIALIZED, 0,
           WIFI_CONNECT, 1,
@@ -13,13 +15,23 @@ MAKE_ENUM(ServiceState, uint8_t,
 MAKE_ENUM(PropertyEnum, uint8_t,
           POWER, 0,
 
-          NIGHT_MODE_ENABLED, 1,
-          NIGHT_MODE_START_TIME, 2,
-          NIGHT_MODE_END_TIME, 3,
+          RELAY_POWER_0, 10,
+          RELAY_POWER_1, 11,
+          RELAY_POWER_2, 12,
+          RELAY_POWER_3, 13,
+
+          NIGHT_MODE_ENABLED, 20,
+          NIGHT_MODE_START_TIME, 21,
+          NIGHT_MODE_END_TIME, 22
 )
 
 MAKE_ENUM(PacketTypeEnum, uint8_t,
           POWER, 0x00,
+
+          RELAY_POWER_0, 0x20,
+          RELAY_POWER_1, 0x21,
+          RELAY_POWER_2, 0x22,
+          RELAY_POWER_3, 0x23,
 
           NIGHT_MODE_ENABLED, 0x40,
           NIGHT_MODE_START_TIME, 0x41,
@@ -27,6 +39,10 @@ MAKE_ENUM(PacketTypeEnum, uint8_t,
 
           GET_CONFIG, 0x80,
 )
+
+struct __attribute ((packed)) RelayConfig {
+    bool power = RELAY_INITIAL_STATE;
+};
 
 struct __attribute ((packed)) NightModeConfig {
     bool enabled = false;
@@ -39,6 +55,9 @@ struct __attribute ((packed)) Config {
     bool power = true;
 
     NightModeConfig night_mode;
+
+    uint8_t relay_count = RELAY_COUNT;
+    bool relay[RELAY_COUNT]{};
 };
 
 typedef PropertyMetadata<PropertyEnum, PacketTypeEnum> AppMetadata;

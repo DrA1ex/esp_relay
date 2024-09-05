@@ -39,8 +39,6 @@ void setup() {
     delay(2000);
 #endif
 
-    pinMode(PIN_RELAY, OUTPUT);
-
     if (!LittleFS.begin()) {
         D_PRINT("Unable to initialize FS");
     }

@@ -15,13 +15,54 @@ std::map<PacketTypeEnum, AppMetadata> Application::PropToMetaMap = {
 
         define_meta_entry(PropertyEnum::NIGHT_MODE_END_TIME, PacketTypeEnum::NIGHT_MODE_END_TIME,
                           &Config::night_mode, &NightModeConfig::end_time),
+
+        {PacketTypeEnum::RELAY_POWER_0, {
+                PropertyEnum::RELAY_POWER_0, PacketTypeEnum::RELAY_POWER_0,
+                offsetof(Config, relay[0]), sizeof(Config::relay[0]),
+        }},
+
+#if RELAY_COUNT >= 2
+        {PacketTypeEnum::RELAY_POWER_1, {
+                PropertyEnum::RELAY_POWER_1, PacketTypeEnum::RELAY_POWER_1,
+                offsetof(Config, relay[1]), sizeof(Config::relay[1]),
+        }},
+
+#endif
+
+#if RELAY_COUNT >= 3
+        {PacketTypeEnum::RELAY_POWER_2, {
+                PropertyEnum::RELAY_POWER_2, PacketTypeEnum::RELAY_POWER_2,
+                offsetof(Config, relay[2]), sizeof(Config::relay[2]),
+        }},
+#endif
+
+#if RELAY_COUNT >= 4
+        {PacketTypeEnum::RELAY_POWER_3, {
+                PropertyEnum::RELAY_POWER_3, PacketTypeEnum::RELAY_POWER_3,
+                offsetof(Config, relay[3]), sizeof(Config::relay[3]),
+        }},
+#endif
 };
 
 Application::Application(Storage<Config> &config_storage, Timer &timer, NtpTime &ntp_time) :
         AbstractApplication<Config, AppMetadata>(PropToMetaMap),
         _config_storage(config_storage), _timer(timer), ntp_time(ntp_time),
-        _night_mode_manager(NightModeManager(ntp_time, timer, config())) {
-}
+        _night_mode_manager(NightModeManager(ntp_time, timer, config())),
+        _relays{
+                RelayManager(_timer, PIN_RELAY_0, RELAY_INITIAL_STATE),
+
+#if RELAY_COUNT >= 2
+                RelayManager(_timer, PIN_RELAY_1, RELAY_INITIAL_STATE),
+#endif
+
+#if RELAY_COUNT >= 3
+                RelayManager(_timer, PIN_RELAY_2, RELAY_INITIAL_STATE),
+#endif
+
+#if RELAY_COUNT >= 4
+                RelayManager(_timer, PIN_RELAY_3, RELAY_INITIAL_STATE),
+#endif
+        } {}
 
 void Application::begin() {
     event_property_changed().subscribe(this, [this](auto, auto prop, auto) {
@@ -43,41 +84,10 @@ void Application::begin() {
 }
 
 void Application::load() {
-    update_relay_state(!_night_mode_manager.active() && config().power);
-}
-
-void Application::update_relay_state(bool state) {
-    if (_relay_update_timer != -1ul) {
-        D_PRINT("Clear existing relay schedule");
-
-        _timer.clear_timeout(_relay_update_timer);
-        _relay_update_timer = -1ul;
+    for (uint8_t i = 0; i < RELAY_COUNT; ++i) {
+        auto enabled = config().relay[i] && !_night_mode_manager.active() && config().power;
+        _relays[i].update_relay_state(enabled);
     }
-
-    if (_relay_state == state) return;
-
-    auto delta = millis() - _last_relay_update;
-    if (delta > RELAY_SWITCH_INTERVAL) {
-        D_PRINTF("Change relay state to %s\n", state ? "ON" : "OFF");
-
-        _relay_state = state;
-        _last_relay_update = millis();
-        digitalWrite(PIN_RELAY, _relay_state ? HIGH : LOW);
-
-        return;
-    }
-
-    D_PRINT("Scheduling relay state change...");
-
-    _relay_update_timer = _timer.add_timeout(
-            [=](auto) {
-                _relay_timer_handler(state);
-            }, RELAY_SWITCH_INTERVAL - delta + 1);
-}
-
-void Application::_relay_timer_handler(bool state) {
-    _relay_update_timer = -1ul;
-    update_relay_state(state);
 }
 
 Response AppPacketHandler::handle_packet_data(uint32_t client_id, const Packet<PacketEnumT> &packet) {

@@ -4,7 +4,12 @@
 
 #define MDNS_NAME                               "esp_relay"
 
-#define PIN_RELAY                               (4u)
+#define RELAY_COUNT                             (1u)                    // Up to 4 relay
+
+#define PIN_RELAY_0                             (4u)
+// #define PIN_RELAY_1                             (5u)
+// #define PIN_RELAY_2                             (0u)
+// #define PIN_RELAY_3                             (2u)
 
 #define RELAY_INITIAL_STATE                     (false)
 #define RELAY_SWITCH_INTERVAL                   (3000ul)

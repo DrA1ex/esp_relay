@@ -9,6 +9,7 @@
 
 #include "constants.h"
 #include "night_mode.h"
+#include "relay.h"
 #include "type.h"
 
 class Application : public AbstractApplication<Config, AppMetadata> {
@@ -20,9 +21,7 @@ class Application : public AbstractApplication<Config, AppMetadata> {
 
     NightModeManager _night_mode_manager;
 
-    bool _relay_state = RELAY_INITIAL_STATE;
-    unsigned long _last_relay_update = 0;
-    unsigned long _relay_update_timer = -1ul;
+    RelayManager _relays[RELAY_COUNT];
 
 public:
     inline ConfigT &config() override { return _config_storage.get(); }
@@ -31,11 +30,6 @@ public:
     void begin();
 
     void load();
-
-    void update_relay_state(bool state);
-
-private:
-    void _relay_timer_handler(bool state);
 };
 
 class AppPacketHandler : public PacketHandler<Application> {
