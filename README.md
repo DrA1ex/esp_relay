@@ -1,6 +1,8 @@
 # esp-relay
 Smart Relay Control for ESP32/ESP8266
 
+![localhost_63342_esd-relay_www_src_index html__ijt=d2609sc3pbukuvqk86f1afic1u _ij_reload=RELOAD_ON_SAVE host=esp_relay_2 local](https://github.com/user-attachments/assets/79f10d8c-4b00-4d3c-b53a-f4702755c636)
+
 
 ## Features
 - Web/Mobile Application (PWA)
@@ -11,6 +13,8 @@ Smart Relay Control for ESP32/ESP8266
 ## Connection
 
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/03cba235-0981-460f-9fcf-69f6f5043c81">
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/82925a6e-1be5-4dda-b36d-2f3ed92ee5a9">
+
 
 ## Installation
 
