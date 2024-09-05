@@ -157,6 +157,15 @@ export class ApplicationBase extends EventEmitter {
 
         for (const cfg of this.propertyConfig) {
             const section = this.propertySections[cfg.key];
+            if (section.config.visibleIf) {
+                if (config.getProperty(section.config.visibleIf)) {
+                    section.section.setVisibility(true);
+                } else {
+                    section.section.setVisibility(false);
+                    continue;
+                }
+            }
+
             for (const prop of cfg.props) {
                 if (!prop.key || prop.type === "skip") continue;
 

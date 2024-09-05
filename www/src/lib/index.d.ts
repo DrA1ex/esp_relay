@@ -372,6 +372,7 @@ declare module "application.js" {
         key: string;
         section: string;
         lock?: boolean;
+        visibleIf?: string;
         props: PropertyConfig[];
     }
 
