@@ -1,6 +1,6 @@
 #pragma once
 
-#define WIFI_SSID                                    "ESP_LED"
+#define WIFI_SSID                                    "ESP_RELAY"
 #define WIFI_PASSWORD                                "12345678"
 
 #define WEBAUTH_USER                                 "esp_led"

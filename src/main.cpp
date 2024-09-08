@@ -43,7 +43,7 @@ void setup() {
         D_PRINT("Unable to initialize FS");
     }
 
-    wifi_manager = new WifiManager(WIFI_SSID, WIFI_PASSWORD);
+    wifi_manager = new WifiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_CONNECTION_CHECK_INTERVAL);
 
     global_timer = new Timer();
     config_storage = new Storage<Config>(*global_timer, "config", STORAGE_CONFIG_VERSION, STORAGE_HEADER);
@@ -64,7 +64,7 @@ void loop() {
 
     switch (service_state) {
         case ServiceState::UNINITIALIZED:
-            wifi_manager->connect(WifiMode::STA);
+            wifi_manager->connect(WIFI_MODE, WIFI_MAX_CONNECTION_ATTEMPT_INTERVAL);
 
             service_state = ServiceState::WIFI_CONNECT;
             break;
