@@ -10,12 +10,19 @@
 
 #define MDNS_NAME                               "esp_relay"
 
-#define RELAY_COUNT                             (1u)                    // Up to 4 relay
+#define RELAY_COUNT                             (4u)                    // Up to 4 relay
 
-#define PIN_RELAY_0                             (4u)
-#define PIN_RELAY_1                             (5u)
-#define PIN_RELAY_2                             (0u)
-#define PIN_RELAY_3                             (2u)
+#ifdef ARDUINO_ARCH_ESP32
+#define PIN_RELAY_0                             (0u)
+#define PIN_RELAY_1                             (1u)
+#define PIN_RELAY_2                             (2u)
+#define PIN_RELAY_3                             (3u)
+#else
+#define PIN_RELAY_0                             (2u)
+#define PIN_RELAY_1                             (4u)
+#define PIN_RELAY_2                             (5u)
+#define PIN_RELAY_3                             (14u)
+#endif
 
 #define RELAY_HIGH_LEVEL                        (true)                  // Level for opened relay
 #define RELAY_INITIAL_STATE                     (false)                 // State for relay on boot
