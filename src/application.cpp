@@ -187,7 +187,7 @@ void Application::restart() {
 
     if (_config_storage.is_pending_commit()) _config_storage.force_save();
 
-    _timer.add_timeout([](auto) { EspClass::restart(); }, RESTART_DELAY);
+    _timer.add_timeout([](auto) { ESP.restart(); }, RESTART_DELAY);
 }
 
 Response AppPacketHandler::handle_packet_data(uint32_t client_id, const Packet<PacketEnumT> &packet) {
