@@ -2,6 +2,7 @@
 #include <ArduinoOTA.h>
 #include <LittleFS.h>
 
+#include "credentials.h"
 #include "constants.h"
 
 #include "lib/misc/timer.h"
@@ -15,7 +16,6 @@
 
 
 #include "application.h"
-#include "credentials.h"
 #include "type.h"
 
 WifiManager *wifi_manager;
@@ -31,6 +31,8 @@ WebServer *web_server;
 WebSocketServer<Application> *ws_server;
 MqttServer<Application> *mqtt_server;
 
+SysConfig *sys_config;
+
 void setup() {
 #if defined(DEBUG)
     Serial.begin(74880);
@@ -40,15 +42,21 @@ void setup() {
 #endif
 
     if (!LittleFS.begin()) {
-        D_PRINT("Unable to initialize FS");
+        D_PRINT("Unable to initialize File System. Rebooting...");
+
+        delay(2000);
+        return ESP.restart();
     }
 
-    wifi_manager = new WifiManager(WIFI_SSID, WIFI_PASSWORD, WIFI_CONNECTION_CHECK_INTERVAL);
-
     global_timer = new Timer();
-    config_storage = new Storage<Config>(*global_timer, "config", STORAGE_CONFIG_VERSION, STORAGE_HEADER);
+    config_storage = new Storage<Config>(*global_timer, "config");
 
     config_storage->begin(&LittleFS);
+
+    sys_config = &config_storage->get().sys_config;
+
+    wifi_manager = new WifiManager(sys_config->wifi_ssid, sys_config->wifi_password,
+                                   sys_config->wifi_connection_check_interval);
 
     ntp_time = new NtpTime();
     app = new Application(*config_storage, *global_timer, *ntp_time);
@@ -64,7 +72,7 @@ void loop() {
 
     switch (service_state) {
         case ServiceState::UNINITIALIZED:
-            wifi_manager->connect(WIFI_MODE, WIFI_MAX_CONNECTION_ATTEMPT_INTERVAL);
+            wifi_manager->connect(sys_config->wifi_mode, sys_config->wifi_max_connection_attempt_interval);
 
             service_state = ServiceState::WIFI_CONNECT;
             break;
@@ -78,15 +86,21 @@ void loop() {
             break;
 
         case ServiceState::INITIALIZING:
-            ntp_time->begin(TIME_ZONE);
+            ntp_time->begin(sys_config->timezone);
             app->begin();
 
             web_server->begin(&LittleFS);
             ws_server->begin(*web_server);
-            mqtt_server->begin(MQTT_HOST, MQTT_PORT, MQTT_USER, MQTT_PASSWORD);
 
-            ArduinoOTA.setHostname(MDNS_NAME);
+            if (sys_config->mqtt) {
+                mqtt_server->begin(sys_config->mqtt_host, sys_config->mqtt_port,
+                                   sys_config->mqtt_user, sys_config->mqtt_password);
+            }
+
+            ArduinoOTA.setHostname(sys_config->mdns_name);
             ArduinoOTA.begin();
+
+            D_PRINTF("ESP Ready: http://%s.local:%u\n", sys_config->mdns_name, web_server->port());
 
             service_state = ServiceState::READY;
             break;

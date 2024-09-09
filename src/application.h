@@ -24,11 +24,13 @@ class Application : public AbstractApplication<Config, AppMetadata> {
 
 public:
     inline ConfigT &config() override { return _config_storage.get(); }
+    inline SysConfig &sys_config() { return config().sys_config; }
 
     explicit Application(Storage<Config> &config_storage, Timer &timer, NtpTime &ntp_time);
     void begin();
 
     void load();
+    void restart();
 };
 
 class AppPacketHandler : public PacketHandler<Application> {
