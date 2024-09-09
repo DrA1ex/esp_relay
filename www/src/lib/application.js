@@ -156,6 +156,8 @@ export class ApplicationBase extends EventEmitter {
         const config = this.config
 
         for (const cfg of this.propertyConfig) {
+            if (!cfg.key || !cfg.props?.length) continue;
+
             const section = this.propertySections[cfg.key];
             if (section.config.visibleIf) {
                 if (config.getProperty(section.config.visibleIf)) {
@@ -184,7 +186,7 @@ export class ApplicationBase extends EventEmitter {
 
                 // TODO:
                 if (prop.type === "select") {
-                    control.setOptions(this.lists[prop.list].map(v => ({key: v.code, label: v.name})));
+                    control.setOptions(this.config.lists[prop.list].map(v => ({key: v.code, label: v.name})));
                 }
 
                 if (prop.type !== "button") {
@@ -254,7 +256,9 @@ export class ApplicationBase extends EventEmitter {
         const propertyMeta = {};
 
         for (const cfg of this.propertyConfig) {
-            const section = this.#startSection(cfg.section, cfg.lock ?? false);
+            if (!cfg.key || !cfg.props?.length) continue;
+
+            const section = this.#startSection(cfg.section, cfg);
 
             sectionMeta[cfg.key] = {section, config: cfg, props: {}};
 
@@ -302,6 +306,15 @@ export class ApplicationBase extends EventEmitter {
                         control.setLabel(prop.label);
                         break;
 
+                    case "title":
+                        control = new TextControl(document.createElement("h4"));
+                        control.setText(prop.label);
+                        break;
+
+                    case "separator":
+                        control = new FrameControl(document.createElement("hr"));
+                        break;
+
                     case "skip":
                         break;
 
@@ -316,9 +329,11 @@ export class ApplicationBase extends EventEmitter {
                     section.appendChild(control);
                 }
 
-                const entry = {prop, title, control};
-                sectionMeta[cfg.key].props[prop.key] = entry;
-                propertyMeta[prop.key] = entry;
+                if (prop.key) {
+                    const entry = {prop, title, control};
+                    sectionMeta[cfg.key].props[prop.key] = entry;
+                    propertyMeta[prop.key] = entry;
+                }
             }
         }
 
@@ -326,7 +341,7 @@ export class ApplicationBase extends EventEmitter {
         this.#propertySections = sectionMeta;
     }
 
-    #startSection(title, lock) {
+    #startSection(title, {lock, collapse}) {
         const frame = new FrameControl(document.createElement("div"));
         frame.addClass("section");
 
@@ -340,6 +355,16 @@ export class ApplicationBase extends EventEmitter {
 
             frame.setAttribute("data-locked", true);
             frame.appendChild(lockBtn);
+        } else if (collapse) {
+            const collapseBtn = new ButtonControl(document.createElement("a"));
+            collapseBtn.addClass("collapse");
+            collapseBtn.setOnClick(() => {
+                const value = frame.getAttribute("data-collapsed") === "true";
+                frame.setAttribute("data-collapsed", !value);
+            });
+
+            frame.setAttribute("data-collapsed", true);
+            frame.appendChild(collapseBtn);
         }
 
         const sectionTitle = new TextControl(document.createElement("h3"));

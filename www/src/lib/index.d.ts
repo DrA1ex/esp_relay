@@ -334,6 +334,8 @@ declare module "application.js" {
         color = "color",
         button = "button",
         skip = "skip",
+        title = "title",
+        separator = "separator",
     }
 
     export enum PropertyKind {
@@ -372,11 +374,19 @@ declare module "application.js" {
         key: string;
         section: string;
         lock?: boolean;
+        collapse?: boolean;
         visibleIf?: string;
         props: PropertyConfig[];
     }
 
     export type PropertiesConfig = SectionConfig[];
+
+    export interface SelectOptionsConfig {
+        code: number;
+        name: string;
+    }
+
+    export type SelectListConfig = Record<string, SelectOptionsConfig>
 
     export interface PropertyMeta {
         prop: PropertyConfig;

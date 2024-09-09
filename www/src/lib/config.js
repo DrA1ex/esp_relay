@@ -33,6 +33,9 @@ export class AppConfigBase extends EventEmitter {
      */
     parse(parser) { throw new Error("Not implemented"); }
 
+    /** @type {SelectListConfig} */
+    lists = {};
+
     /**
      * @param {PropertiesConfig} propertyConfig
      */
@@ -40,7 +43,7 @@ export class AppConfigBase extends EventEmitter {
         super();
 
         this.#propertyMap = propertyConfig.reduce((res, section) => {
-            for (const prop of section.props) {
+            for (const prop of section.props ?? []) {
                 if (res[prop.key]) {
                     console.warn(`Key ${prop.key} already exist`);
                     continue;
