@@ -56,7 +56,7 @@ ADDRESS=esp_relay.local
 # Additional envs if OTA enabled
 if [ "$ENV" = "ota" ]; then OTA=1 else OTA=0 ADDRESS= fi
 
-pio run -t upload -e $PLATFORM-$ENV --upload-port $ADDRESS
+pio run -t upload -e $PLATFORM-$ENV --upload-port "$ADDRESS"
 ./upload_fs.sh --upload-port "$ADDRESS"
 ```
 
