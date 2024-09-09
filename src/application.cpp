@@ -149,6 +149,12 @@ Application::Application(Storage<Config> &config_storage, Timer &timer, NtpTime 
         } {}
 
 void Application::begin() {
+    for (auto &relay: _relays) {
+        relay.set_initial_state(sys_config().relay_initial_state);
+        relay.set_high_level(sys_config().relay_high_state);
+        relay.set_switch_interval(sys_config().relay_switch_interval);
+    }
+
     event_property_changed().subscribe(this, [this](auto, auto prop, auto) {
         _config_storage.save();
 
