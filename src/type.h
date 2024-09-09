@@ -145,7 +145,7 @@ struct __attribute ((packed)) Config {
     uint8_t relay_count = ACTUAL_RELAY_COUNT;
     RelayConfig relay[ACTUAL_RELAY_COUNT]{};
 
-    SysConfig sys_config;
+    SysConfig sys_config{};
 };
 
 typedef PropertyMetadata<PropertyEnum, PacketTypeEnum> AppMetadata;

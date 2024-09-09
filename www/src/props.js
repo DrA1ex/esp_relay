@@ -60,7 +60,7 @@ export const Properties = [{
         {key: "sys_config.mqtt_host", title: "Host", type: "text", kind: "FixedString", cmd: PacketType.SYS_CONFIG_MQTT_HOST, maxLength: 32},
         {key: "sys_config.mqtt_port", title: "Port", type: "int", kind: "Uint16",  cmd: PacketType.SYS_CONFIG_MQTT_PORT, min: 1, limit: 65535},
         {key: "sys_config.mqtt_user", title: "User", type: "text", kind: "FixedString", cmd: PacketType.SYS_CONFIG_MQTT_USER, maxLength: 32},
-        {key: "sys_config.mqtt_password", title: "Password", type: "text", kind: "FixedString", cmd: PacketType.SYS_CONFIG_MQTT_PASSWORD, maxLength: 32},
+        {key: "sys_config.mqtt_password", title: "Password", type: "password", kind: "FixedString", cmd: PacketType.SYS_CONFIG_MQTT_PASSWORD, maxLength: 32},
 
         {type: "title", label: "Actions", extra: {m_top: true}},
         {key: "apply_sys_config",type: "button", label: "Apply Settings"}

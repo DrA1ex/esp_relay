@@ -415,7 +415,7 @@ export class ApplicationBase extends EventEmitter {
 
             if (Array.isArray(prop.cmd)) {
                 await this.#ws.request(value ? prop.cmd[0] : prop.cmd[1]);
-            } else if (prop.type === "text") {
+            } else if (prop.type === "text" || prop.type === "password") {
                 const str = prop.maxLength ? value.slice(0, prop.maxLength) : value;
                 let buffer = new TextEncoder().encode(str).buffer;
 
