@@ -8,16 +8,16 @@ export const Properties = [{
         {key: "power", title: "Power", type: "trigger", kind: "Boolean", cmd: PacketType.POWER}
     ],
 }, {
-    key: "relay_list", section: "Relay control", visibleIf: "relay.1", props: [
-        {key: "relay.0.power", title: "Relay #1", type: "trigger", kind: "Boolean", cmd: PacketType.RELAY_POWER_0, visibleIf: "relay.0"},
-        {key: "relay.1.power", title: "Relay #2", type: "trigger", kind: "Boolean", cmd: PacketType.RELAY_POWER_1, visibleIf: "relay.1"},
-        {key: "relay.2.power", title: "Relay #3", type: "trigger", kind: "Boolean", cmd: PacketType.RELAY_POWER_2, visibleIf: "relay.2"},
-        {key: "relay.3.power", title: "Relay #4", type: "trigger", kind: "Boolean", cmd: PacketType.RELAY_POWER_3, visibleIf: "relay.3"},
+    key: "relay_list", section: "Relay control", visibleIf: "_relay_cfg.0", props: [
+        {key: "relay.0.power", title: "Relay #1", type: "trigger", kind: "Boolean", cmd: PacketType.RELAY_POWER_0, visibleIf: "_relay_cfg.0"},
+        {key: "relay.1.power", title: "Relay #2", type: "trigger", kind: "Boolean", cmd: PacketType.RELAY_POWER_1, visibleIf: "_relay_cfg.1"},
+        {key: "relay.2.power", title: "Relay #3", type: "trigger", kind: "Boolean", cmd: PacketType.RELAY_POWER_2, visibleIf: "_relay_cfg.2"},
+        {key: "relay.3.power", title: "Relay #4", type: "trigger", kind: "Boolean", cmd: PacketType.RELAY_POWER_3, visibleIf: "_relay_cfg.3"},
 
-        {key: "relay.0", type: "skip"},
-        {key: "relay.1", type: "skip"},
-        {key: "relay.2", type: "skip"},
-        {key: "relay.3", type: "skip"},
+        {key: "_relay_cfg.0", type: "skip"},
+        {key: "_relay_cfg.1", type: "skip"},
+        {key: "_relay_cfg.2", type: "skip"},
+        {key: "_relay_cfg.3", type: "skip"},
     ]
 }, {
     key: "night_mode", section: "Night Mode", collapse: "true", props: [
@@ -39,12 +39,12 @@ export const Properties = [{
         {key: "sys_config.wifi_max_connection_attempt_interval", title: "Max Connection Attempt Interval", type: "int", kind: "Uint32", cmd: PacketType.SYS_CONFIG_WIFI_MAX_CONNECTION_ATTEMPT_INTERVAL},
 
         {type: "title", label: "Relay PIN"},
-        //TODO:
-        //{key: "sys_config.relay_count", title: "Count", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_COUNT, min: 1, limit: 4},
-        {key: "sys_config.relay.0.pin", title: "Relay #1", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_PIN_0, visibleIf: "relay.0"},
-        {key: "sys_config.relay.1.pin", title: "Relay #2", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_PIN_1, visibleIf: "relay.1"},
-        {key: "sys_config.relay.2.pin", title: "Relay #3", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_PIN_2, visibleIf: "relay.2"},
-        {key: "sys_config.relay.3.pin", title: "Relay #4", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_PIN_3, visibleIf: "relay.3"},
+
+        {key: "sys_config.relay_count", title: "Count", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_COUNT, min: 1, limit: 4},
+        {key: "sys_config.relay.0.pin", title: "Relay #1", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_PIN_0, visibleIf: "_relay_cfg.0"},
+        {key: "sys_config.relay.1.pin", title: "Relay #2", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_PIN_1, visibleIf: "_relay_cfg.1"},
+        {key: "sys_config.relay.2.pin", title: "Relay #3", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_PIN_2, visibleIf: "_relay_cfg.2"},
+        {key: "sys_config.relay.3.pin", title: "Relay #4", type: "int", kind: "Uint8", cmd: PacketType.SYS_CONFIG_RELAY_PIN_3, visibleIf: "_relay_cfg.3"},
 
         {type: "title", label: "Relay Extra"},
         {key: "sys_config.relay_high_state", title: "High State", type: "trigger", kind: "Boolean", cmd: PacketType.SYS_CONFIG_RELAY_HIGH_STATE},

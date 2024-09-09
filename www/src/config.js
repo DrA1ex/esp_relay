@@ -48,6 +48,8 @@ export class Config extends AppConfigBase {
 
     sys_config;
 
+    _relay_cfg;
+
     get cmd() {
         return PacketType.GET_CONFIG;
     }
@@ -103,5 +105,7 @@ export class Config extends AppConfigBase {
             mqtt_user: parser.readFixedString(32),
             mqtt_password: parser.readFixedString(32)
         }
+
+        this._relay_cfg = Array.from({length: this.sys_config.relay_count}, () => true);
     }
 }

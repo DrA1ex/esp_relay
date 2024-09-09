@@ -217,9 +217,9 @@ declare module "network/ws.js" {
         /**
          * @param cmd - Command type (generic)
          * @param buffer - Optional payload as ArrayBuffer
-         * @returns Promise that resolves with either ArrayBuffer or any type
+         * @returns Promise that resolves with Packet
          */
-        request<CmdEnumT>(cmd: CmdEnumT, buffer?: ArrayBuffer | null): Promise<ArrayBuffer | any>;
+        request<CmdEnumT>(cmd: CmdEnumT, buffer?: ArrayBuffer | null): Promise<Packet<SystemPacketType>>;
     }
 }
 

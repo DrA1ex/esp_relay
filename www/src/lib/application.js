@@ -10,6 +10,7 @@ import {
     WheelControl
 } from "./control"
 import {EventEmitter} from "./misc/event_emitter.js";
+import {BinaryParser} from "./misc/binary_parser.js";
 import {WebSocketInteraction} from "./network/ws.js";
 import * as FunctionUtils from "./utils/function.js";
 
@@ -240,19 +241,24 @@ export class ApplicationBase extends EventEmitter {
     }
 
     #handleNotification(sender, packet) {
-        const property = Object.values(this.propertyMeta)
-            .find(p => p.prop.cmd instanceof Array ? p.prop.cmd.includes(packet.type) : p.prop.cmd === packet.type);
+        return this.#refreshProperty(packet.type, packet.parser());
+    }
 
-        if (!property) return console.error("Received notification for unknown property", packet.type);
+    #refreshProperty(type, parser) {
+        const property = Object.values(this.propertyMeta)
+            .find(p => p.prop.cmd instanceof Array ? p.prop.cmd.includes(type) : p.prop.cmd === type);
+
+        if (!property) return console.error("Trying to refresh unknown property", type);
 
         let value;
         if (property.prop.cmd instanceof Array) {
-            value = property.prop.cmd[0] === packet.type;
+            value = property.prop.cmd[0] === type;
         } else if (property.prop.kind === "FixedString" && property.prop.maxLength) {
-            value = packet.parser().readFixedString(property.prop.maxLength);
+            value = parser.readFixedString(property.prop.maxLength);
         } else {
-            value = packet.parser()[`read${property.prop.kind}`]();
+            value = parser[`read${property.prop.kind}`]();
         }
+
 
         this.emitEvent(this.Event.Notification, {key: property.prop.key, value});
     }
@@ -421,12 +427,14 @@ export class ApplicationBase extends EventEmitter {
 
                 if (prop.maxLength && prop.kind === "FixedString") {
                     const paddedBuffer = new Uint8Array(prop.maxLength).fill(0);
-                    paddedBuffer.set(new Uint8Array(buffer));
-                    buffer = paddedBuffer;
+                    // Need to slice twice, because some symbols takes more byte space (like emoji)
+                    const dataBuffer = new Uint8Array(buffer).slice(0, prop.maxLength);
+                    paddedBuffer.set(dataBuffer);
+                    buffer = paddedBuffer.buffer;
                 }
 
                 await this.#ws.request(prop.cmd, buffer);
-
+                control.setValue(new BinaryParser(buffer).readFixedString(prop.maxLength));
             } else {
                 const kind = prop.kind ?? "Uint8";
                 const size = {
@@ -467,6 +475,7 @@ export class ApplicationBase extends EventEmitter {
                 serializeFn.call(view, 0, value, true);
 
                 await this.#ws.request(prop.cmd, req.buffer);
+                control.setValue(value);
             }
 
             console.log(`Changed '${prop.key}': '${oldValue}' -> '${value}'`);
