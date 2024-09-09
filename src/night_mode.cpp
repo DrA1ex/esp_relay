@@ -44,14 +44,14 @@ void NightModeManager::update() {
 
     if (start_offset > end_offset) _next_start_night_time -= NtpTime::SECONDS_PER_DAY;
 
-    D_PRINTF("Night mode: time %s - %s\n", D_TIME_STRING(_next_start_night_time), D_TIME_STRING(_next_end_night_time));
+    D_PRINTF("Night mode: time %s - %s\r\n", D_TIME_STRING(_next_start_night_time), D_TIME_STRING(_next_end_night_time));
 
     bool active = now >= _next_start_night_time && now <= _next_end_night_time;
     _set_state(active ? NightModeState::ACTIVE : NightModeState::WAITING);
 
     unsigned long interval = (active ? _next_end_night_time : _next_start_night_time) - now + 1;
 
-    D_PRINTF("Night mode: schedule update after %lu sec\n", interval);
+    D_PRINTF("Night mode: schedule update after %lu sec\r\n", interval);
 
     _night_mode_timer = _timer.add_timeout(
             [=](auto) {
@@ -62,7 +62,7 @@ void NightModeManager::update() {
 void NightModeManager::_set_state(NightModeState new_state) {
     if (_state == new_state) return;
 
-    D_PRINTF("Night mode: %s\n", __debug_enum_str(new_state));
+    D_PRINTF("Night mode: %s\r\n", __debug_enum_str(new_state));
 
     _state = new_state;
     _e_night_mode_state.publish(this, _state);

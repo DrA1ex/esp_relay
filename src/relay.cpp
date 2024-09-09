@@ -10,7 +10,7 @@ RelayManager::RelayManager(Timer &timer, uint8_t pin) :
 
 void RelayManager::update_relay_state(bool state) {
     if (_relay_update_timer != -1ul) {
-        D_PRINTF("Relay %u:Clear existing schedule\n", _pin);
+        D_PRINTF("Relay %u:Clear existing schedule\r\n", _pin);
 
         _timer.clear_timeout(_relay_update_timer);
         _relay_update_timer = -1ul;
@@ -20,7 +20,7 @@ void RelayManager::update_relay_state(bool state) {
 
     auto delta = millis() - _last_relay_update;
     if (delta > _switch_interval) {
-        D_PRINTF("Relay %u: Change state to %s\n", _pin, state ? "ON" : "OFF");
+        D_PRINTF("Relay %u: Change state to %s\r\n", _pin, state ? "ON" : "OFF");
 
         _relay_state = state;
         _last_relay_update = millis();
@@ -29,7 +29,7 @@ void RelayManager::update_relay_state(bool state) {
         return;
     }
 
-    D_PRINTF("Relay %u: Scheduling state change...\n", _pin);
+    D_PRINTF("Relay %u: Scheduling state change...\r\n", _pin);
 
     _relay_update_timer = _timer.add_timeout(
             [=](auto) {

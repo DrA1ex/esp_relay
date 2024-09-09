@@ -189,7 +189,7 @@ void Application::load() {
 }
 
 void Application::restart() {
-    D_PRINTF("Received restart signal. Restarting after %u ms.\n", RESTART_DELAY);
+    D_PRINTF("Received restart signal. Restarting after %u ms.\r\n", RESTART_DELAY);
 
     if (_config_storage.is_pending_commit()) _config_storage.force_save();
 
