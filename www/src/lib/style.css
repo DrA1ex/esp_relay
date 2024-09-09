@@ -94,7 +94,7 @@ body {
     z-index: -1;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
     text-transform: uppercase;
     font-weight: 300;
     color: var(--text-color);
@@ -114,6 +114,11 @@ h2 {
 
 h3 {
     font-size: 1.5rem;
+    margin: 0 auto 2rem;
+}
+
+h4 {
+    font-size: 1.25rem;
     margin: 0 auto 2rem;
 }
 
@@ -166,7 +171,7 @@ h3 {
     box-shadow: var(--frame-shadow);
 }
 
-.section > .lock {
+.section > .lock, .section > .collapse {
     position: absolute;
     right: 1rem;
     padding: 0;
@@ -176,18 +181,26 @@ h3 {
     height: 2rem;
 }
 
-.section > .lock::after {
+.section > .lock::after,
+.section > .collapse::after {
     content: " ";
 
     display: block;
     width: 100%;
     height: 100%;
 
-    mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxwYXRoIGQ9Ik0gOCAxIEMgNS43OTY4NzUgMSA0IDIuNzk2ODc1IDQgNSBMIDQgNiBMIDMuNSA2IEMgMi42NzU3ODEgNiAyIDYuNjc1NzgxIDIgNy41IEwgMiAxMi41IEMgMiAxMy4zMjQyMTkgMi42NzU3ODEgMTQgMy41IDE0IEwgMTIuNSAxNCBDIDEzLjMyNDIxOSAxNCAxNCAxMy4zMjQyMTkgMTQgMTIuNSBMIDE0IDcuNSBDIDE0IDYuNjc1NzgxIDEzLjMyNDIxOSA2IDEyLjUgNiBMIDEyIDYgTCAxMiA1IEMgMTIgMi43OTY4NzUgMTAuMjAzMTI1IDEgOCAxIFogTSA4IDIgQyA5LjY2NDA2MyAyIDExIDMuMzM1OTM4IDExIDUgTCAxMSA2IEwgNSA2IEwgNSA1IEMgNSAzLjMzNTkzOCA2LjMzNTkzOCAyIDggMiBaIE0gMy41IDcgTCAxMi41IDcgQyAxMi43ODEyNSA3IDEzIDcuMjE4NzUgMTMgNy41IEwgMTMgMTIuNSBDIDEzIDEyLjc4MTI1IDEyLjc4MTI1IDEzIDEyLjUgMTMgTCAzLjUgMTMgQyAzLjIxODc1IDEzIDMgMTIuNzgxMjUgMyAxMi41IEwgMyA3LjUgQyAzIDcuMjE4NzUgMy4yMTg3NSA3IDMuNSA3IFoiPjwvcGF0aD4KPC9zdmc+');
     mask-repeat: no-repeat;
     mask-position: 50%;
 
     background: var(--text-color);
+}
+
+.section > .lock::after {
+    mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiI+CjxwYXRoIGQ9Ik0gOCAxIEMgNS43OTY4NzUgMSA0IDIuNzk2ODc1IDQgNSBMIDQgNiBMIDMuNSA2IEMgMi42NzU3ODEgNiAyIDYuNjc1NzgxIDIgNy41IEwgMiAxMi41IEMgMiAxMy4zMjQyMTkgMi42NzU3ODEgMTQgMy41IDE0IEwgMTIuNSAxNCBDIDEzLjMyNDIxOSAxNCAxNCAxMy4zMjQyMTkgMTQgMTIuNSBMIDE0IDcuNSBDIDE0IDYuNjc1NzgxIDEzLjMyNDIxOSA2IDEyLjUgNiBMIDEyIDYgTCAxMiA1IEMgMTIgMi43OTY4NzUgMTAuMjAzMTI1IDEgOCAxIFogTSA4IDIgQyA5LjY2NDA2MyAyIDExIDMuMzM1OTM4IDExIDUgTCAxMSA2IEwgNSA2IEwgNSA1IEMgNSAzLjMzNTkzOCA2LjMzNTkzOCAyIDggMiBaIE0gMy41IDcgTCAxMi41IDcgQyAxMi43ODEyNSA3IDEzIDcuMjE4NzUgMTMgNy41IEwgMTMgMTIuNSBDIDEzIDEyLjc4MTI1IDEyLjc4MTI1IDEzIDEyLjUgMTMgTCAzLjUgMTMgQyAzLjIxODc1IDEzIDMgMTIuNzgxMjUgMyAxMi41IEwgMyA3LjUgQyAzIDcuMjE4NzUgMy4yMTg3NSA3IDMuNSA3IFoiPjwvcGF0aD4KPC9zdmc+');
+}
+
+.section > .collapse::after {
+    mask-image: url("data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIxNnB4IiBoZWlnaHQ9IjE2cHgiIHZpZXdCb3g9IjAsMCwyNTYsMjU2Ij48ZyA+PGcgdHJhbnNmb3JtPSJzY2FsZSg1LjEyLDUuMTIpIj48cGF0aCBkPSJNMjQuOTY4NzUsMTNjLTAuNTE5NTMsMC4wMDc4MSAtMS4wMTU2MiwwLjIxODc1IC0xLjM4MjgxLDAuNTg1OTRsLTIwLDIwYy0wLjUyMzQ0LDAuNSAtMC43MzQzNywxLjI0NjA5IC0wLjU1MDc4LDEuOTQ5MjJjMC4xODM1OSwwLjY5OTIyIDAuNzMwNDcsMS4yNDYwOSAxLjQyOTY5LDEuNDI5NjljMC43MDMxMywwLjE4MzU5IDEuNDQ5MjIsLTAuMDI3MzQgMS45NDkyMiwtMC41NTA3OGwxOC41ODU5NCwtMTguNTg1OTRsMTguNTg1OTQsMTguNTg1OTRjMC41LDAuNTIzNDQgMS4yNDYwOSwwLjczNDM4IDEuOTQ5MjIsMC41NTA3OGMwLjY5OTIyLC0wLjE4MzU5IDEuMjQ2MDksLTAuNzMwNDcgMS40Mjk2OSwtMS40Mjk2OWMwLjE4MzU5LC0wLjcwMzEyIC0wLjAyNzM0LC0xLjQ0OTIyIC0wLjU1MDc4LC0xLjk0OTIybC0yMCwtMjBjLTAuMzgyODEsLTAuMzgyODEgLTAuOTAyMzQsLTAuNTkzNzUgLTEuNDQ1MzEsLTAuNTg1OTR6Ij48L3BhdGg+PC9nPjwvZz48L3N2Zz4=")
 }
 
 .section[data-locked=true] > .lock::after {
@@ -212,6 +225,19 @@ h3 {
 
 .section[data-locked=true] .wheel::before {
     filter: saturate(0.3);
+}
+
+.section[data-collapsed=true] > .collapse::after {
+    scale: 100% -100%;
+}
+
+.section[data-collapsed=true] {
+    height: 5rem;
+    overflow: clip;
+}
+
+.section[data-collapsed=true] > *:not(.collapse, .section-title) {
+    visibility: collapse;
 }
 
 .section:has(+ .section) {
@@ -309,6 +335,7 @@ h3 {
 
 
 .input[type="text"],
+.input[type="password"],
 .input[type="color"],
 .input[type="time"] {
     appearance: none;
@@ -317,6 +344,7 @@ h3 {
 }
 
 .input[type="text"]:focus,
+.input[type="password"]:focus,
 .input[type="color"]:focus,
 .input[type="time"]:focus {
     outline: none;
@@ -400,6 +428,11 @@ p {
     font-weight: 300;
     margin-bottom: 0.75rem;
     user-select: none;
+}
+
+hr {
+    border: 0.05rem solid var(--text-color-inactive);
+    margin: 1rem 0.5rem;
 }
 
 .status {

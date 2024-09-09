@@ -265,6 +265,7 @@ declare module "control/index.js" {
 
     export enum InputType {
         text = "text",
+        password = "password",
         int = "int",
         float = "float",
         time = "time",
@@ -331,6 +332,7 @@ declare module "application.js" {
         select = "select",
         int = "int",
         text = "text",
+        password = "password",
         color = "color",
         button = "button",
         skip = "skip",
@@ -350,6 +352,8 @@ declare module "application.js" {
         BigInt64 = "BigInt64",
         Float32 = "Float32",
         Float64 = "Float64",
+        FixedString = "FixedString",
+        NullTerminatedString = "NullTerminatedString",
     }
 
     // TODO: separate types
@@ -360,7 +364,7 @@ declare module "application.js" {
         cmd?: [number, number] | number;
         min?: number;
         limit?: number;
-        kind?: string;
+        kind?: keyof typeof PropertyKind;
         label?: string;
         maxLength?: number;
         list?: number;
@@ -368,6 +372,7 @@ declare module "application.js" {
         default?: any,
         visibleIf?: string;
         displayConverter?: (value: any) => string;
+        extra?: { m_top?: boolean };
     }
 
     export interface SectionConfig {

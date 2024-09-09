@@ -44,6 +44,8 @@ export class AppConfigBase extends EventEmitter {
 
         this.#propertyMap = propertyConfig.reduce((res, section) => {
             for (const prop of section.props ?? []) {
+                if (!prop.key) continue;
+
                 if (res[prop.key]) {
                     console.warn(`Key ${prop.key} already exist`);
                     continue;
