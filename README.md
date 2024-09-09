@@ -7,7 +7,7 @@ Smart Relay Control for ESP32/ESP8266
 
 ## UI
 
-![localhost_63342_esd-relay_www_src_index html__ijt=d2609sc3pbukuvqk86f1afic1u _ij_reload=RELOAD_ON_SAVE host=esp_relay_2 local](https://github.com/user-attachments/assets/79f10d8c-4b00-4d3c-b53a-f4702755c636)
+![UI](https://github.com/user-attachments/assets/79f10d8c-4b00-4d3c-b53a-f4702755c636)
 
 
 ## Features
