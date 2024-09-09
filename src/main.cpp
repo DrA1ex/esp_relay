@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 #include <LittleFS.h>
+#include <DNSServer.h>
 
 #include "credentials.h"
 #include "constants.h"
@@ -13,7 +14,7 @@
 #include "lib/network/wifi.h"
 #include "lib/network/server/ws.h"
 #include "lib/network/server/mqtt.h"
-
+#include "lib/utils/qr.h"
 
 #include "application.h"
 #include "type.h"
@@ -32,6 +33,8 @@ WebSocketServer<Application> *ws_server;
 MqttServer<Application> *mqtt_server;
 
 SysConfig *sys_config;
+
+DNSServer *dnsServer;
 
 void setup() {
 #if defined(DEBUG)
@@ -100,7 +103,27 @@ void loop() {
             ArduinoOTA.setHostname(sys_config->mdns_name);
             ArduinoOTA.begin();
 
-            D_PRINTF("ESP Ready: http://%s.local:%u\n", sys_config->mdns_name, web_server->port());
+            D_PRINT("ESP Ready");
+
+            if (wifi_manager->mode() == WifiMode::AP) {
+                dnsServer = new DNSServer();
+                dnsServer->start(53, "*", WiFi.softAPIP());
+
+                D_PRINT("Connect to WiFi:");
+                qr_print_wifi_connection(wifi_manager->ssid(), wifi_manager->password());
+            } else {
+                String url = "http://";
+                url += sys_config->mdns_name;
+                url += ".local";
+
+                if (web_server->port() != 80) {
+                    url += ":";
+                    url += web_server->port();
+                }
+
+                D_PRINT("Open WebUI:");
+                qr_print_string(url.c_str());
+            }
 
             service_state = ServiceState::READY;
             break;
@@ -109,7 +132,8 @@ void loop() {
             wifi_manager->handle_connection();
             ArduinoOTA.handle();
 
-            ntp_time->update();
+            if (dnsServer) dnsServer->processNextRequest();
+            if (wifi_manager->mode() == WifiMode::STA) ntp_time->update();
 
             global_timer->handle_timers();
             ws_server->handle_incoming_data();
