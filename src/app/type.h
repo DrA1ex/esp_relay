@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "lib/base/application.h"
+#include "lib/base/parameter.h"
 #include "lib/network/wifi.h"
 #include "lib/utils/enum.h"
 
@@ -10,48 +10,6 @@
 #include "constants.h"
 
 constexpr uint8_t ACTUAL_RELAY_COUNT = std::max(1, std::min<int>(MAX_RELAY_COUNT, RELAY_COUNT));
-
-MAKE_ENUM(ServiceState, uint8_t,
-          UNINITIALIZED, 0,
-          WIFI_CONNECT, 1,
-          INITIALIZING, 2,
-          READY, 3
-)
-
-MAKE_ENUM(PropertyEnum, uint8_t,
-          POWER, 0,
-
-          RELAY_POWER_0, 10,
-          RELAY_POWER_1, 11,
-          RELAY_POWER_2, 12,
-          RELAY_POWER_3, 13,
-
-          NIGHT_MODE_ENABLED, 20,
-          NIGHT_MODE_START_TIME, 21,
-          NIGHT_MODE_END_TIME, 22,
-
-          SYS_CONFIG_MDNS_NAME, 0x60,
-          SYS_CONFIG_WIFI_MODE, 0x61,
-          SYS_CONFIG_WIFI_SSID, 0x62,
-          SYS_CONFIG_WIFI_PASSWORD, 0x63,
-          SYS_CONFIG_WIFI_CONNECTION_CHECK_INTERVAL, 0x64,
-          SYS_CONFIG_WIFI_MAX_CONNECTION_ATTEMPT_INTERVAL, 0x65,
-          SYS_CONFIG_RELAY_COUNT, 0x66,
-          SYS_CONFIG_RELAY_PIN_0, 0x67,
-          SYS_CONFIG_RELAY_PIN_1, 0x68,
-          SYS_CONFIG_RELAY_PIN_2, 0x69,
-          SYS_CONFIG_RELAY_PIN_3, 0x6A,
-          SYS_CONFIG_RELAY_HIGH_STATE, 0x6B,
-          SYS_CONFIG_RELAY_INITIAL_STATE, 0x6C,
-          SYS_CONFIG_RELAY_FORCE_INITIAL_STATE, 0x6D,
-          SYS_CONFIG_RELAY_SWITCH_INTERVAL, 0x6E,
-          SYS_CONFIG_TIMEZONE, 0x6F,
-          SYS_CONFIG_MQTT_ENABLED, 0x70,
-          SYS_CONFIG_MQTT_HOST, 0x71,
-          SYS_CONFIG_MQTT_PORT, 0x72,
-          SYS_CONFIG_MQTT_USER, 0x73,
-          SYS_CONFIG_MQTT_PASSWORD, 0x74,
-)
 
 MAKE_ENUM(PacketTypeEnum, uint8_t,
           POWER, 0x00,
@@ -92,12 +50,14 @@ MAKE_ENUM(PacketTypeEnum, uint8_t,
           RESTART, 0x90,
 )
 
+typedef char ConfigString[CONFIG_STRING_SIZE];
+
 struct __attribute ((packed)) SysConfig {
-    char mdns_name[32]{MDNS_NAME};
+    ConfigString mdns_name{MDNS_NAME};
 
     WifiMode wifi_mode = WIFI_MODE;
-    char wifi_ssid[32]{WIFI_SSID};
-    char wifi_password[32]{WIFI_PASSWORD};
+    ConfigString wifi_ssid{WIFI_SSID};
+    ConfigString wifi_password{WIFI_PASSWORD};
 
     uint32_t wifi_connection_check_interval = WIFI_CONNECTION_CHECK_INTERVAL;
     uint32_t wifi_max_connection_attempt_interval = WIFI_MAX_CONNECTION_ATTEMPT_INTERVAL;
@@ -113,10 +73,10 @@ struct __attribute ((packed)) SysConfig {
     float timezone = TIME_ZONE;
 
     bool mqtt = MQTT;
-    char mqtt_host[32]{MQTT_HOST};
+    ConfigString mqtt_host{MQTT_HOST};
     uint16_t mqtt_port = MQTT_PORT;
-    char mqtt_user[32]{MQTT_USER};
-    char mqtt_password[32]{MQTT_PASSWORD};
+    ConfigString mqtt_user{MQTT_USER};
+    ConfigString mqtt_password{MQTT_PASSWORD};
 
     SysConfig() {
         relay_pin[0] = PIN_RELAY_0;
@@ -147,5 +107,3 @@ struct __attribute ((packed)) Config {
 
     SysConfig sys_config{};
 };
-
-typedef PropertyMetadata<PropertyEnum, PacketTypeEnum> AppMetadata;

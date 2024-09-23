@@ -7,7 +7,7 @@
 #include "lib/misc/timer.h"
 #include "lib/utils/enum.h"
 
-#include "type.h"
+#include "app/type.h"
 
 MAKE_ENUM(NightModeState, uint8_t,
           KILLED, 0,
