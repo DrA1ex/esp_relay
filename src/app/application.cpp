@@ -29,11 +29,12 @@ void Application::begin() {
     _night_mode_manager = std::make_unique<NightModeManager>(*_ntp_time, timer, _bootstrap->config());
 
     _relays = std::make_unique<std::array<std::unique_ptr<RelayManager>, ACTUAL_RELAY_COUNT>>();
+    _relay_count = std::min(config().relay_count, ACTUAL_RELAY_COUNT);
 
     (*_relays)[0] = std::make_unique<RelayManager>(timer, sys_config.relay_pin[0]);
-    if constexpr (ACTUAL_RELAY_COUNT >= 2) (*_relays)[1] = std::make_unique<RelayManager>(timer, sys_config.relay_pin[1]);
-    if constexpr (ACTUAL_RELAY_COUNT >= 3) (*_relays)[2] = std::make_unique<RelayManager>(timer, sys_config.relay_pin[2]);
-    if constexpr (ACTUAL_RELAY_COUNT >= 4) (*_relays)[3] = std::make_unique<RelayManager>(timer, sys_config.relay_pin[3]);
+    if (_relay_count >= 2) (*_relays)[1] = std::make_unique<RelayManager>(timer, sys_config.relay_pin[1]);
+    if (_relay_count >= 3) (*_relays)[2] = std::make_unique<RelayManager>(timer, sys_config.relay_pin[2]);
+    if (_relay_count >= 4) (*_relays)[3] = std::make_unique<RelayManager>(timer, sys_config.relay_pin[3]);
 
     for (auto &relay: *_relays) {
         relay->set_initial_state(sys_config.relay_initial_state);
@@ -71,13 +72,9 @@ void Application::event_loop() {
 
 void Application::load() {
     auto &relays = *_relays;
-    if constexpr (ACTUAL_RELAY_COUNT == 1) {
-        relays[0]->update_relay_state(!_night_mode_manager->active() && config().power);
-    } else {
-        for (uint8_t i = 0; i < ACTUAL_RELAY_COUNT; ++i) {
-            auto enabled = config().relay[i].power && !_night_mode_manager->active() && config().power;
-            relays[i]->update_relay_state(enabled);
-        }
+    for (uint8_t i = 0; i < _relay_count; ++i) {
+        auto enabled = config().relay[i].power && !_night_mode_manager->active() && config().power;
+        relays[i]->update_relay_state(enabled);
     }
 }
 

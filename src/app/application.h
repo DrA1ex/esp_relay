@@ -17,6 +17,7 @@ class Application {
     std::unique_ptr<NightModeManager> _night_mode_manager = nullptr;
     std::unique_ptr<NtpTime> _ntp_time = nullptr;
 
+    uint8_t _relay_count = 0;
     std::unique_ptr<std::array<std::unique_ptr<RelayManager>, ACTUAL_RELAY_COUNT>> _relays = nullptr;
 
     std::unique_ptr<ConfigMeta> _metadata = nullptr;
