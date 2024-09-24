@@ -58,7 +58,9 @@ void Application::begin() {
         load();
 
         _bootstrap->timer().add_interval([this](auto) {
-            _ntp_time->update();
+            if (_bootstrap->wifi_manager()->mode() == WifiMode::STA) {
+                _ntp_time->update();
+            }
         }, BOOTSTRAP_SERVICE_LOOP_INTERVAL);
     });
 
