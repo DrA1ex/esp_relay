@@ -11,17 +11,17 @@ void Application::begin() {
 
     auto &sys_config = _bootstrap->config().sys_config;
     _bootstrap->begin({
-                              .mdns_name = sys_config.mdns_name,
-                              .wifi_mode = sys_config.wifi_mode,
-                              .wifi_ssid = sys_config.wifi_ssid,
-                              .wifi_password = sys_config.wifi_password,
-                              .wifi_connection_timeout = sys_config.wifi_max_connection_attempt_interval,
-                              .mqtt_enabled = sys_config.mqtt,
-                              .mqtt_host = sys_config.mqtt_host,
-                              .mqtt_port = sys_config.mqtt_port,
-                              .mqtt_user = sys_config.mqtt_user,
-                              .mqtt_password = sys_config.mqtt_password,
-                      });
+        .mdns_name = sys_config.mdns_name,
+        .wifi_mode = sys_config.wifi_mode,
+        .wifi_ssid = sys_config.wifi_ssid,
+        .wifi_password = sys_config.wifi_password,
+        .wifi_connection_timeout = sys_config.wifi_max_connection_attempt_interval,
+        .mqtt_enabled = sys_config.mqtt,
+        .mqtt_host = sys_config.mqtt_host,
+        .mqtt_port = sys_config.mqtt_port,
+        .mqtt_user = sys_config.mqtt_user,
+        .mqtt_password = sys_config.mqtt_password,
+    });
 
     Timer &timer = _bootstrap->timer();
 
@@ -64,6 +64,9 @@ void Application::begin() {
         }, BOOTSTRAP_SERVICE_LOOP_INTERVAL);
     });
 
+    _api = std::make_unique<ApiWebServer>(*this);
+    _api->begin(_bootstrap->web_server());
+
     load();
     _setup();
 }
@@ -78,6 +81,18 @@ void Application::load() {
         auto enabled = config().relay[i].power && !_night_mode_manager->active() && config().power;
         relays[i]->update_relay_state(enabled);
     }
+}
+
+void Application::update() {
+    _bootstrap->save_changes();
+    load();
+}
+
+void Application::set_power(bool value) {
+    config().power = value;
+    update();
+
+    NotificationBus::get().notify_parameter_changed(this, _metadata->power.get_parameter());
 }
 
 void Application::_setup() {
@@ -123,6 +138,5 @@ void Application::_handle_property_change(const AbstractParameter *param) {
         _night_mode_manager->update();
     }
 
-    _bootstrap->save_changes();
-    load();
+    update();
 }
