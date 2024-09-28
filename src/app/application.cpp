@@ -40,6 +40,8 @@ void Application::begin() {
         relay->set_initial_state(sys_config.relay_initial_state);
         relay->set_high_level(sys_config.relay_high_state);
         relay->set_switch_interval(sys_config.relay_switch_interval);
+
+        relay->begin();
     }
 
     if (sys_config.relay_force_initial_state) {

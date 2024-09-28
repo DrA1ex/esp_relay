@@ -11,6 +11,7 @@ class RelayManager {
     uint8_t _pin;
     Timer &_timer;
 
+    bool _initalized = false;
     bool _relay_state = RELAY_INITIAL_STATE;
     bool _high_level = RELAY_HIGH_LEVEL;
     uint32_t _switch_interval = RELAY_SWITCH_INTERVAL;
@@ -25,6 +26,7 @@ class RelayManager {
 public:
     RelayManager(Timer &timer, uint8_t pin);
 
+    void begin();
     void update_relay_state(bool state);
 
     inline void set_initial_state(bool value) { _relay_state = value; }
