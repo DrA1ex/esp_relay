@@ -106,6 +106,10 @@ export class Config extends AppConfigBase {
             mqtt_password: parser.readFixedString(32)
         }
 
+        this.refreshRelayConfig();
+    }
+
+    refreshRelayConfig() {
         this._relay_cfg = Array.from({length: this.sys_config.relay_count}, () => true);
     }
 }

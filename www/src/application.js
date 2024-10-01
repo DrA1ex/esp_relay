@@ -18,6 +18,8 @@ export class Application extends ApplicationBase {
         await super.begin(root);
 
         this.propertyMeta["apply_sys_config"].control.setOnClick(this.applySysConfig.bind(this));
+
+        this.subscribe(this, this.Event.PropertyCommited, this.onPropCommited.bind(this));
     }
 
     async applySysConfig(sender) {
@@ -46,6 +48,21 @@ export class Application extends ApplicationBase {
         } catch (err) {
             console.log("Unable to send restart signal", err);
             sender.setAttribute("data-saving", false);
+        }
+    }
+
+    onPropCommited(config, {key}) {
+        if (key === "sys_config.relay_count") {
+            this.config.refreshRelayConfig();
+
+            for (const propKey of [
+                "sys_config.relay.0.pin",
+                "sys_config.relay.1.pin",
+                "sys_config.relay.2.pin",
+                "sys_config.relay.3.pin",
+            ]) {
+                this.emitEvent(this.Event.Notification, {key: propKey, value: this.config.getProperty(propKey)});
+            }
         }
     }
 }
