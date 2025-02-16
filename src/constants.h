@@ -35,5 +35,3 @@
 #define TIME_ZONE                               (5.f)                   // GMT +5:00
 
 #define MQTT                                    (0u)
-
-#include "_override/credentials.h"
